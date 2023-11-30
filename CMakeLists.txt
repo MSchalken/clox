@@ -10,6 +10,7 @@ set(SOURCE_FILES
     src/chunk.c
     src/value.c
     src/debug.c)
+    src/scanner.c
     src/compiler.c
     src/vm.c)
 
