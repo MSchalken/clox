@@ -5,7 +5,11 @@ include(CTest)
 enable_testing()
 
 set(SOURCE_FILES
-    main.c)
+    main.c
+    src/memory.c
+    src/chunk.c
+    src/value.c
+    src/debug.c)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
