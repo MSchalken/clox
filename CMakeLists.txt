@@ -9,7 +9,7 @@ set(SOURCE_FILES
     src/memory.c
     src/chunk.c
     src/value.c
-    src/debug.c)
+    src/debug.c
     src/scanner.c
     src/compiler.c
     src/vm.c)
