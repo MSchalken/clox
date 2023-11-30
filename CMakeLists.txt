@@ -10,6 +10,8 @@ set(SOURCE_FILES
     src/chunk.c
     src/value.c
     src/debug.c)
+    src/compiler.c
+    src/vm.c)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
