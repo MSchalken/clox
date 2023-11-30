@@ -1,0 +1,29 @@
+class myData
+{
+    init(msg)
+    {
+        this.msg = msg;
+    }
+
+    example(n)
+    {
+        if (n == 42)
+        {
+            print this.msg;
+        }
+        return n;
+    }
+}
+
+fun
+example(n, msg)
+{
+    if (n == 42)
+    {
+        print msg;
+    }
+    return n;
+}
+
+var x = (4 / 2 + 2) * 10.5;
+example(x);
