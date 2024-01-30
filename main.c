@@ -111,8 +111,7 @@ int main(int argc, const char *argv[])
 
     if (argc == 1)
     {
-        // repl();
-        vmExample();
+        repl();
     }
     else if (argc == 2)
     {
