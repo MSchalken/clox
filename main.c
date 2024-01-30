@@ -7,42 +7,6 @@
 #include "src/debug.h"
 #include "src/vm.h"
 
-void vmExample()
-{
-    // Example chunk for -((1.2 + 3.4) / 5.6)
-    Chunk chunk;
-    initChunk(&chunk);
-
-    int constant = addConstant(&chunk, 1.2);
-    writeChunk(&chunk, OP_CONSTANT, 123);
-    writeChunk(&chunk, constant, 123);
-
-    constant = addConstant(&chunk, 3.4);
-    writeChunk(&chunk, OP_CONSTANT, 123);
-    writeChunk(&chunk, constant, 123);
-
-    writeChunk(&chunk, OP_ADD, 123);
-
-    constant = addConstant(&chunk, 5.6);
-    writeChunk(&chunk, OP_CONSTANT, 123);
-    writeChunk(&chunk, constant, 123);
-
-    writeChunk(&chunk, OP_DIVIDE, 123);
-
-    writeChunk(&chunk, OP_NEGATE, 123);
-
-    writeChunk(&chunk, OP_RETURN, 123);
-
-    disassembleChunk(&chunk, "Example chunk");
-
-    printf("\n");
-
-    printf("== VM (Example chunk) ==");
-    InterpretResult result = interpretChunk(&chunk);
-
-    freeChunk(&chunk);
-}
-
 static char *readFile(const char *path)
 {
     FILE *file = fopen(path, "rb");
