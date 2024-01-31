@@ -6,12 +6,13 @@ enable_testing()
 
 set(SOURCE_FILES
     main.c
-    src/memory.c
     src/chunk.c
-    src/value.c
-    src/debug.c
-    src/scanner.c
     src/compiler.c
+    src/debug.c
+    src/memory.c
+    src/object.c
+    src/scanner.c
+    src/value.c
     src/vm.c)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
