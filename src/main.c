@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "src/chunk.h"
-#include "src/common.h"
-#include "src/debug.h"
-#include "src/vm.h"
+#include "chunk.h"
+#include "common.h"
+#include "debug.h"
+#include "vm.h"
 
 static char *readFile(const char *path) {
   FILE *file = fopen(path, "rb");

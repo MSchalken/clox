@@ -119,7 +119,6 @@ static void endCompiler() {
   if (!parser.hadError) {
     disassembleChunk(currentChunk(), "code");
   }
-
 #endif
 }
 
