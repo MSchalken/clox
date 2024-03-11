@@ -1,4 +1,4 @@
-#if !defined(clox_table_h)
+#ifndef clox_table_h
 #define clox_table_h
 
 #include "common.h"
