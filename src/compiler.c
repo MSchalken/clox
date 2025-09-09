@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/cdefs.h>
 
 #include "chunk.h"
 #include "common.h"
@@ -49,7 +48,14 @@ typedef struct {
   int depth;
 } Local;
 
+typedef enum {
+  TYPE_FUNCTION,
+  TYPE_SCRIPT,
+} FunctionType;
+
 typedef struct {
+  ObjFunction *function;
+  FunctionType type;
   Local locals[UINT8_MAX + 1];
   int localCount;
   int scopeDepth;
@@ -59,13 +65,21 @@ Parser parser;
 Compiler *current = NULL;
 Chunk *compilingChunk;
 
-static void initCompiler(Compiler *compiler) {
+static void initCompiler(Compiler *compiler, FunctionType type) {
+  compiler->function = NULL;
+  compiler->type = type;
   compiler->localCount = 0;
   compiler->scopeDepth = 0;
+  compiler->function = newFunction();
   current = compiler;
+
+  Local *local = &current->locals[current->localCount++];
+  local->depth = 0;
+  local->name.start = "";
+  local->name.length = 0;
 }
 
-static Chunk *currentChunk() { return compilingChunk; }
+static Chunk *currentChunk() { return &current->function->chunk; }
 
 static void errorAt(Token *token, const char *message) {
   if (parser.panicMode) return;
@@ -157,7 +171,7 @@ static void emitReturn() { emitByte(OP_RETURN); }
 static int emitJump(uint8_t instruction) {
   emitByte(instruction);
   emitBytes(0xff, 0xff);
-  return currentChunk()->count-2;
+  return currentChunk()->count - 2;
 }
 
 static void patchJump(int offset) {
@@ -261,13 +275,19 @@ static void declareVariable() {
   addLocal(*name);
 }
 
-static void endCompiler() {
+static ObjFunction *endCompiler() {
   emitReturn();
+  ObjFunction *function = current->function;
+
 #ifdef DEBUG_PRINT_CODE
   if (!parser.hadError) {
-    disassembleChunk(currentChunk(), "code");
+    const char *chunkName =
+        function->name != NULL ? function->name->chars : "<script>";
+    disassembleChunk(currentChunk(), chunkName);
   }
 #endif
+
+  return function;
 }
 
 static void beginScope() { current->scopeDepth++; }
@@ -354,7 +374,7 @@ static void and_(__attribute_maybe_unused__ bool _) {
   patchJump(endJump);
 }
 
-static void or_(__attribute_maybe_unused__ bool _){
+static void or_(__attribute_maybe_unused__ bool _) {
   int elseJump = emitJump(OP_JUMP_IF_FALSE);
   int endJump = emitJump(OP_JUMP);
 
@@ -652,11 +672,10 @@ static void declaration() {
   if (parser.panicMode) synchronize();
 }
 
-bool compile(const char *source, Chunk *chunk) {
+ObjFunction *compile(const char *source) {
   initScanner(source);
   Compiler compiler;
-  initCompiler(&compiler);
-  compilingChunk = chunk;
+  initCompiler(&compiler, TYPE_SCRIPT);
 
   parser.hadError = false;
   parser.panicMode = false;
@@ -667,6 +686,6 @@ bool compile(const char *source, Chunk *chunk) {
     declaration();
   }
 
-  endCompiler();
-  return !parser.hadError;
+  ObjFunction *function = endCompiler();
+  return parser.hadError ? NULL : function;
 }
